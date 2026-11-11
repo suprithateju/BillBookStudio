@@ -1,6 +1,6 @@
 🧾 Bill Book — Interactive Desktop POS Studio
 
-100% Offline Point-of-Sale (POS) & Retail Intelligence Engine
+Point-of-Sale (POS) & Retail Intelligence Engine
 
 Quick Start •
 Features •
