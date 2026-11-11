@@ -1,0 +1,1870 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Bill Book - Interactive POS & Sales Intelligence Dashboard</title>
+  <meta name="theme-color" content="#0f766e">
+  <meta name="description" content="Offline interactive 3-column desktop billing studio with real-time analytics, dynamic UPI QR code generator and interactive sales history ledger">
+
+  <style>
+    /* ==========================================================================
+       INTERACTIVE DESIGN SYSTEM - 100% OFFLINE / ZERO REMOTE ASSETS
+       ========================================================================== */
+    :root {
+      --primary: #0f766e;
+      --primary-dark: #115e59;
+      --primary-light: #14b8a6;
+      --emerald: #10b981;
+      --emerald-dark: #059669;
+      --amber: #f59e0b;
+      --rose: #f43f5e;
+      --slate-50: #f8fafc;
+      --slate-100: #f1f5f9;
+      --slate-200: #e2e8f0;
+      --slate-300: #cbd5e1;
+      --slate-400: #94a3b8;
+      --slate-500: #64748b;
+      --slate-600: #475569;
+      --slate-700: #334155;
+      --slate-800: #1e293b;
+      --slate-900: #0f172a;
+      --app-bg: #090d16;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      background-color: var(--app-bg);
+      color: var(--slate-800);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      overflow-x: hidden;
+      user-select: none;
+    }
+
+    /* Top Navigation Bar */
+    .top-navbar {
+      background: #111827;
+      border-bottom: 1px solid #1f2937;
+      padding: 10px 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      color: #ffffff;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    .brand-group {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .brand-icon {
+      width: 38px;
+      height: 38px;
+      border-radius: 10px;
+      background: linear-gradient(135deg, #0f766e, #10b981);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #fff;
+      box-shadow: 0 0 14px rgba(16, 185, 129, 0.35);
+    }
+
+    .brand-meta h1 {
+      font-size: 1.15rem;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      line-height: 1.2;
+    }
+
+    .brand-meta p {
+      font-size: 0.73rem;
+      color: #94a3b8;
+    }
+
+    .header-actions {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .status-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: rgba(16, 185, 129, 0.12);
+      border: 1px solid rgba(16, 185, 129, 0.3);
+      color: #34d399;
+      font-size: 0.72rem;
+      font-weight: 700;
+      padding: 4px 10px;
+      border-radius: 999px;
+    }
+
+    .pulse-dot {
+      width: 7px;
+      height: 7px;
+      background: #34d399;
+      border-radius: 50%;
+      box-shadow: 0 0 8px #34d399;
+      animation: pulse 2s infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.4; transform: scale(0.85); }
+    }
+
+    .btn-nav {
+      background: #1f2937;
+      color: #f3f4f6;
+      border: 1px solid #374151;
+      padding: 6px 12px;
+      font-size: 0.78rem;
+      font-weight: 600;
+      border-radius: 8px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.15s;
+    }
+    .btn-nav:hover { background: #374151; color: #fff; }
+    .btn-nav.active { background: #0f766e; border-color: #14b8a6; }
+
+    /* Top Live Sales Stats Bar */
+    .dashboard-stats-strip {
+      background: #111827;
+      border-bottom: 1px solid #1f2937;
+      padding: 8px 24px;
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 16px;
+    }
+
+    .stat-metric {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 6px 12px;
+      background: #1f2937;
+      border-radius: 10px;
+      border: 1px solid #374151;
+    }
+
+    .stat-metric-icon {
+      width: 32px;
+      height: 32px;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 14px;
+    }
+
+    .stat-metric-info {
+      display: flex;
+      flex-direction: column;
+    }
+    .stat-label {
+      font-size: 10px;
+      font-weight: 700;
+      color: #94a3b8;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+    .stat-value {
+      font-size: 15px;
+      font-weight: 800;
+      color: #ffffff;
+      font-family: monospace;
+    }
+
+    /* 3-Column Studio Layout */
+    .studio-dashboard {
+      flex: 1;
+      display: grid;
+      grid-template-columns: 1.15fr 0.95fr 0.9fr;
+      gap: 18px;
+      padding: 16px 24px;
+      max-width: 1720px;
+      margin: 0 auto;
+      width: 100%;
+      height: calc(100vh - 128px);
+      box-sizing: border-box;
+    }
+
+    /* Column Panels */
+    .dashboard-col {
+      background: #ffffff;
+      border-radius: 14px;
+      border: 1px solid #1e293b;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.35);
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      height: 100%;
+    }
+
+    .col-header {
+      padding: 12px 18px;
+      border-bottom: 1px solid var(--slate-200);
+      background: #f8fafc;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .col-title {
+      font-size: 0.85rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--slate-700);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .col-body {
+      flex: 1;
+      overflow-y: auto;
+      padding: 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      background: #f8fafc;
+    }
+
+    /* Card styling */
+    .card {
+      background: #ffffff;
+      border-radius: 12px;
+      padding: 12px 14px;
+      border: 1px solid var(--slate-200);
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.03);
+    }
+
+    /* Search and Quick Filters in Col 1 & 3 */
+    .search-filter-box {
+      display: flex;
+      gap: 6px;
+      margin-bottom: 6px;
+    }
+
+    .search-inp {
+      flex: 1;
+      background: #ffffff;
+      border: 1px solid #cbd5e1;
+      border-radius: 8px;
+      padding: 6px 10px;
+      font-size: 12px;
+      outline: none;
+    }
+    .search-inp:focus { border-color: var(--primary); }
+
+    /* POS Quick Add Chips with badge */
+    .quick-items-scroll {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-top: 6px;
+      max-height: 85px;
+      overflow-y: auto;
+    }
+
+    .item-chip {
+      background: #f1f5f9;
+      border: 1px solid #cbd5e1;
+      padding: 5px 9px;
+      border-radius: 8px;
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--slate-800);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.12s;
+    }
+    .item-chip:hover {
+      background: #ccfbf1;
+      border-color: #0f766e;
+      transform: translateY(-1px);
+    }
+    .item-chip:active { transform: scale(0.96); }
+    .item-chip span {
+      color: #0f766e;
+      font-weight: 800;
+    }
+
+    /* Inputs & Form Elements */
+    .input-row {
+      display: grid;
+      grid-template-columns: 2fr 1.1fr 1.2fr auto;
+      gap: 8px;
+      margin-bottom: 10px;
+      align-items: center;
+    }
+
+    .inp {
+      background: #ffffff;
+      border: 1px solid #cbd5e1;
+      border-radius: 8px;
+      padding: 8px 10px;
+      font-size: 12px;
+      color: var(--slate-900);
+      outline: none;
+      width: 100%;
+    }
+    .inp:focus {
+      border-color: var(--primary);
+    }
+
+    .btn-add {
+      background: var(--primary);
+      color: #ffffff;
+      border: none;
+      border-radius: 8px;
+      padding: 8px 14px;
+      font-weight: 700;
+      font-size: 15px;
+      cursor: pointer;
+      transition: background 0.15s;
+    }
+    .btn-add:hover { background: var(--primary-dark); }
+    .btn-add:active { transform: scale(0.95); }
+
+    /* Interactive Line Item List with Stepper */
+    .bill-items-list {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      max-height: 200px;
+      overflow-y: auto;
+    }
+
+    .bill-item-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: #ffffff;
+      padding: 7px 10px;
+      border-radius: 8px;
+      border-left: 3px solid var(--primary);
+      border-top: 1px solid var(--slate-200);
+      border-right: 1px solid var(--slate-200);
+      border-bottom: 1px solid var(--slate-200);
+      font-size: 12px;
+    }
+
+    .item-name-cell {
+      display: flex;
+      flex-direction: column;
+      max-width: 130px;
+    }
+    .item-name-title {
+      font-weight: 700;
+      color: var(--slate-800);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .item-unit-calc {
+      font-size: 10px;
+      color: var(--slate-500);
+    }
+
+    .stepper-group {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      background: #f1f5f9;
+      padding: 2px 4px;
+      border-radius: 6px;
+      border: 1px solid #cbd5e1;
+    }
+
+    .btn-step {
+      background: #ffffff;
+      border: 1px solid #cbd5e1;
+      width: 20px;
+      height: 20px;
+      border-radius: 4px;
+      cursor: pointer;
+      font-weight: 800;
+      font-size: 11px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--slate-700);
+    }
+    .btn-step:hover { background: #e2e8f0; }
+
+    .stepper-val {
+      font-size: 11px;
+      font-weight: 700;
+      min-width: 24px;
+      text-align: center;
+    }
+
+    .item-price-cell {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-weight: 800;
+      color: var(--slate-900);
+      font-family: monospace;
+      font-size: 13px;
+    }
+
+    .btn-remove-item {
+      background: #fee2e2;
+      border: none;
+      color: #ef4444;
+      border-radius: 6px;
+      width: 20px;
+      height: 20px;
+      font-size: 11px;
+      font-weight: 800;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .btn-remove-item:hover { background: #fecaca; }
+
+    /* Calculation Summary Block */
+    .calc-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 12px;
+      color: var(--slate-600);
+      margin-bottom: 5px;
+    }
+
+    .calc-row.grand-total {
+      border-top: 2px dashed #cbd5e1;
+      padding-top: 8px;
+      margin-top: 6px;
+      font-size: 17px;
+      font-weight: 900;
+      color: #0f766e;
+    }
+
+    .calc-row input[type="number"] {
+      width: 75px;
+      padding: 3px 6px;
+      font-size: 12px;
+      border: 1px solid #cbd5e1;
+      border-radius: 6px;
+      text-align: right;
+    }
+
+    .action-btn-row {
+      display: flex;
+      gap: 8px;
+      margin-top: 6px;
+    }
+
+    .btn-cta {
+      flex: 1;
+      background: #10b981;
+      color: #ffffff;
+      border: none;
+      border-radius: 10px;
+      padding: 11px;
+      font-size: 13px;
+      font-weight: 800;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      cursor: pointer;
+      box-shadow: 0 4px 12px rgba(16, 185, 129, 0.25);
+      transition: all 0.15s;
+    }
+    .btn-cta:hover { background: #059669; }
+    .btn-cta:active { transform: scale(0.98); }
+
+    .btn-secondary {
+      background: #e2e8f0;
+      color: var(--slate-800);
+      border: none;
+      border-radius: 10px;
+      padding: 10px 14px;
+      font-size: 12px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: background 0.15s;
+    }
+    .btn-secondary:hover { background: #cbd5e1; }
+
+    /* COLUMN 2: RECEIPT / BILL VIEW CARD */
+    .payment-tabs {
+      display: flex;
+      gap: 4px;
+      background: #e2e8f0;
+      padding: 3px;
+      border-radius: 8px;
+      margin-bottom: 8px;
+    }
+
+    .pay-tab {
+      flex: 1;
+      border: none;
+      background: none;
+      padding: 5px;
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--slate-600);
+      border-radius: 6px;
+      cursor: pointer;
+    }
+    .pay-tab.active {
+      background: #ffffff;
+      color: var(--primary);
+      box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    }
+
+    .receipt-paper {
+      background: #ffffff;
+      border-radius: 14px;
+      padding: 18px;
+      border: 1px solid #cbd5e1;
+      box-shadow: 0 4px 14px rgba(0, 0, 0, 0.05);
+      position: relative;
+    }
+
+    .receipt-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      border-bottom: 2px solid var(--slate-800);
+      padding-bottom: 6px;
+      margin-bottom: 10px;
+    }
+
+    .receipt-shop-name {
+      font-size: 17px;
+      font-weight: 900;
+      color: var(--slate-900);
+    }
+
+    .receipt-bill-no {
+      font-family: monospace;
+      font-size: 15px;
+      font-weight: 700;
+      color: #0f766e;
+    }
+
+    .receipt-item-line {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 6px;
+      font-size: 13px;
+    }
+
+    .receipt-total-bar {
+      border-top: 1.5px solid var(--slate-300);
+      padding-top: 8px;
+      margin-top: 10px;
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      font-size: 18px;
+      font-weight: 900;
+      color: var(--slate-900);
+    }
+
+    /* UPI QR Box */
+    .qr-container {
+      margin: 12px auto 6px;
+      padding: 10px;
+      background: #ffffff;
+      border: 2px solid var(--slate-200);
+      border-radius: 12px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
+      width: fit-content;
+      transition: all 0.2s;
+    }
+
+    #bill-qr-canvas {
+      display: block;
+      width: 150px;
+      height: 150px;
+    }
+
+    .upi-help-tag {
+      font-size: 10px;
+      font-weight: 700;
+      color: #64748b;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+    }
+
+    .whatsapp-btn {
+      width: 100%;
+      background: #25d366;
+      color: #ffffff;
+      border: none;
+      border-radius: 10px;
+      padding: 10px;
+      font-size: 13px;
+      font-weight: 800;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      cursor: pointer;
+      box-shadow: 0 4px 12px rgba(37, 211, 102, 0.25);
+      transition: background 0.15s;
+    }
+    .whatsapp-btn:hover { background: #1eb956; }
+
+    /* COLUMN 3: SALES HISTORY & ANALYTICS LEDGER */
+    .sales-summary-box {
+      background: linear-gradient(135deg, #0f766e, #115e59);
+      border-radius: 12px;
+      padding: 14px;
+      color: #ffffff;
+      box-shadow: 0 6px 16px rgba(15, 118, 110, 0.25);
+      position: relative;
+    }
+
+    .sales-subtitle {
+      font-size: 11px;
+      text-transform: uppercase;
+      font-weight: 700;
+      letter-spacing: 0.05em;
+      opacity: 0.85;
+    }
+
+    .sales-big-number {
+      font-size: 30px;
+      font-weight: 900;
+      letter-spacing: -0.02em;
+      margin: 2px 0;
+      font-family: monospace;
+    }
+
+    .sales-stats-row {
+      display: flex;
+      justify-content: space-between;
+      font-size: 11px;
+      opacity: 0.9;
+      border-top: 1px solid rgba(255, 255, 255, 0.2);
+      padding-top: 6px;
+      margin-top: 6px;
+    }
+
+    /* Interactive Sparkline Velocity Chart */
+    .sparkline-box {
+      background: #ffffff;
+      border: 1px solid var(--slate-200);
+      border-radius: 10px;
+      padding: 8px 10px;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+    .sparkline-title {
+      font-size: 10px;
+      font-weight: 700;
+      text-transform: uppercase;
+      color: var(--slate-500);
+      display: flex;
+      justify-content: space-between;
+    }
+
+    .sparkline-bars {
+      display: flex;
+      align-items: flex-end;
+      gap: 4px;
+      height: 38px;
+      padding-top: 4px;
+    }
+    .spark-bar {
+      flex: 1;
+      background: #ccfbf1;
+      border-top: 2px solid #0f766e;
+      border-radius: 2px 2px 0 0;
+      min-height: 4px;
+      cursor: pointer;
+      position: relative;
+      transition: all 0.15s;
+    }
+    .spark-bar:hover {
+      background: #0f766e;
+    }
+
+    .filter-tags-row {
+      display: flex;
+      gap: 4px;
+      margin-top: 2px;
+    }
+    .filter-pill {
+      background: #e2e8f0;
+      border: none;
+      padding: 3px 8px;
+      border-radius: 6px;
+      font-size: 10px;
+      font-weight: 700;
+      color: var(--slate-700);
+      cursor: pointer;
+    }
+    .filter-pill.active {
+      background: #0f766e;
+      color: #ffffff;
+    }
+
+    .history-card {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 10px 12px;
+      background: #ffffff;
+      border: 1px solid var(--slate-200);
+      border-radius: 8px;
+      margin-bottom: 6px;
+      cursor: pointer;
+      transition: all 0.12s;
+    }
+    .history-card:hover {
+      border-color: #0f766e;
+      transform: translateX(2px);
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+    }
+    .history-card.selected {
+      border-color: #0f766e;
+      border-left: 4px solid #0f766e;
+      background: #f0fdfa;
+    }
+
+    .history-bill-meta {
+      display: flex;
+      flex-direction: column;
+    }
+    .history-bill-id {
+      font-family: monospace;
+      font-size: 12px;
+      font-weight: 800;
+      color: #0f766e;
+    }
+    .history-bill-time {
+      font-size: 10px;
+      color: var(--slate-500);
+    }
+    .history-bill-total {
+      font-size: 14px;
+      font-weight: 900;
+      color: var(--slate-900);
+      font-family: monospace;
+    }
+
+    /* Modal Backdrop */
+    .modal-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(15, 23, 42, 0.75);
+      z-index: 200;
+      display: none;
+      align-items: center;
+      justify-content: center;
+    }
+    .modal-backdrop.active { display: flex; }
+
+    .modal-window {
+      background: #ffffff;
+      width: 100%;
+      max-width: 480px;
+      border-radius: 16px;
+      padding: 22px;
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+    }
+
+    /* Toast */
+    .toast {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      background: #1e293b;
+      color: #ffffff;
+      font-size: 12px;
+      font-weight: 600;
+      padding: 10px 16px;
+      border-radius: 8px;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+      opacity: 0;
+      pointer-events: none;
+      transition: all 0.25s;
+      z-index: 300;
+      border-left: 4px solid #10b981;
+    }
+    .toast.show { opacity: 1; transform: translateY(0); }
+
+    @media (max-width: 1200px) {
+      .dashboard-stats-strip { grid-template-columns: repeat(2, 1fr); }
+      .studio-dashboard {
+        grid-template-columns: 1fr;
+        height: auto;
+      }
+      .dashboard-col { min-height: 520px; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Top Navbar -->
+  <header class="top-navbar">
+    <div class="brand-group">
+      <div class="brand-icon">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+      </div>
+      <div class="brand-meta">
+        <h1 id="head-shop-name">Sharma Stores</h1>
+        <p id="head-shop-sub">Interactive POS & Retail Intelligence</p>
+      </div>
+    </div>
+
+    <div class="header-actions">
+      <div class="status-pill">
+        <span class="pulse-dot"></span>
+        100% Offline Active
+      </div>
+      <button class="btn-nav" id="btn-toggle-sound" title="Toggle audio feedback">
+        <span id="sound-icon">🔔</span> Audio On
+      </button>
+      <button class="btn-nav" id="btn-open-settings">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+        Profile & UPI
+      </button>
+    </div>
+  </header>
+
+  <!-- Real-Time Metrics Strip -->
+  <section class="dashboard-stats-strip">
+    <div class="stat-metric">
+      <div class="stat-metric-icon" style="background:#042f2e; color:#2dd4bf;">💰</div>
+      <div class="stat-metric-info">
+        <span class="stat-label">Today's Revenue</span>
+        <span class="stat-value" id="strip-total-sales">₹4,860.00</span>
+      </div>
+    </div>
+    <div class="stat-metric">
+      <div class="stat-metric-icon" style="background:#1e1b4b; color:#818cf8;">🧾</div>
+      <div class="stat-metric-info">
+        <span class="stat-label">Invoices Cleared</span>
+        <span class="stat-value" id="strip-bill-count">5 Bills</span>
+      </div>
+    </div>
+    <div class="stat-metric">
+      <div class="stat-metric-icon" style="background:#451a03; color:#fbbf24;">📈</div>
+      <div class="stat-metric-info">
+        <span class="stat-label">Average Ticket</span>
+        <span class="stat-value" id="strip-avg-ticket">₹972.00</span>
+      </div>
+    </div>
+    <div class="stat-metric">
+      <div class="stat-metric-icon" style="background:#311042; color:#c084fc;">🏷️</div>
+      <div class="stat-metric-info">
+        <span class="stat-label">Tax Collected (GST)</span>
+        <span class="stat-value" id="strip-tax-collected">₹128.50</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ==========================================
+       3-COLUMN DESKTOP POS STUDIO WORKBENCH
+       ========================================== -->
+  <main class="studio-dashboard">
+
+    <!-- COLUMN 1: BILLING (INPUTS & POS) -->
+    <section class="dashboard-col">
+      <div class="col-header">
+        <span class="col-title">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+          1. Billing
+        </span>
+        <button id="btn-manage-items" style="background:none; border:none; color:#0f766e; font-weight:700; font-size:12px; cursor:pointer;">+ Add Catalog Item</button>
+      </div>
+
+      <div class="col-body">
+        <!-- Quick Add Catalog Chips -->
+        <div>
+          <div style="display:flex; justify-content:space-between; align-items:center;">
+            <span style="font-size:11px; font-weight:700; color:#64748b; text-transform:uppercase;">Quick Catalog</span>
+            <span style="font-size:10px; color:#94a3b8;">Click item to add</span>
+          </div>
+          <div class="quick-items-scroll" id="quick-catalog-list"></div>
+        </div>
+
+        <!-- Custom Line Item Entry -->
+        <div class="card">
+          <div style="display:flex; justify-content:space-between; margin-bottom:6px; font-size:11px; font-weight:700; color:#475569;">
+            <span>Custom Item Entry</span>
+            <span id="bill-item-counter" style="color:#0f766e;">0 items</span>
+          </div>
+
+          <div class="input-row">
+            <input type="text" id="inp-item-name" class="inp" placeholder="Item Name (e.g. Atta 5 kg)">
+            <input type="number" id="inp-item-qty" class="inp" placeholder="Qty" value="1" min="0.1" step="any">
+            <input type="number" id="inp-item-rate" class="inp" placeholder="Rate ₹" min="0" step="any">
+            <button class="btn-add" id="btn-add-line-item" title="Add item">+</button>
+          </div>
+
+          <!-- Active Items list with Stepper -->
+          <div class="bill-items-list" id="current-items-container">
+            <div style="text-align: center; color: #94a3b8; font-size: 11px; padding: 18px 0;">
+              No items in active bill. Tap quick items or type above.
+            </div>
+          </div>
+        </div>
+
+        <!-- Adjustments & Totals -->
+        <div class="card" style="margin-top:auto;">
+          <div class="calc-row">
+            <span>Subtotal</span>
+            <span id="calc-subtotal" style="font-weight:700; font-family:monospace;">₹0.00</span>
+          </div>
+          <div class="calc-row">
+            <span>Discount (₹)</span>
+            <input type="number" id="inp-discount" value="0" min="0">
+          </div>
+          <div class="calc-row">
+            <span>GST / Tax (%)</span>
+            <input type="number" id="inp-tax" value="0" min="0" max="28">
+          </div>
+          <div class="calc-row grand-total">
+            <span>Total Payable</span>
+            <span id="calc-grand-total" style="font-family:monospace;">₹0.00</span>
+          </div>
+
+          <div class="action-btn-row">
+            <button class="btn-secondary" id="btn-clear-bill">Clear</button>
+            <button class="btn-cta" id="btn-create-bill">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+              Generate Bill & UPI QR
+            </button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- COLUMN 2: CURRENT BILL (RECEIPT & UPI QR) -->
+    <section class="dashboard-col">
+      <div class="col-header">
+        <span class="col-title">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+          2. Current Bill
+        </span>
+        <button class="btn-secondary" id="btn-new-bill-shortcut" style="padding:4px 8px; font-size:11px;">+ New Bill</button>
+      </div>
+
+      <div class="col-body" style="justify-content:space-between;">
+        <!-- Payment Mode Toggle -->
+        <div>
+          <div class="payment-tabs">
+            <button class="pay-tab active" data-mode="upi">UPI QR Payment</button>
+            <button class="pay-tab" data-mode="cash">Cash Tender</button>
+            <button class="pay-tab" data-mode="card">Card / Split</button>
+          </div>
+
+          <!-- Clean Receipt Card matching Image 1 format -->
+          <div class="receipt-paper" id="printable-receipt">
+            <div class="receipt-header">
+              <div>
+                <div class="receipt-shop-name" id="rec-shop-title">Sharma Stores</div>
+                <div style="font-size:10px; color:#64748b;" id="rec-pay-mode-badge">Paid via UPI</div>
+              </div>
+              <div class="receipt-bill-no" id="rec-bill-id">#104</div>
+            </div>
+
+            <div id="rec-items-flow">
+              <!-- Dynamically populated items -->
+            </div>
+
+            <div id="rec-summary-flow" style="margin-top: 6px; font-size: 11px; color: #64748b;"></div>
+
+            <div class="receipt-total-bar">
+              <span>Total</span>
+              <span id="rec-total-amount">₹285</span>
+            </div>
+
+            <!-- Offline Dynamic UPI QR Code -->
+            <div class="qr-container" id="qr-box-wrap">
+              <canvas id="bill-qr-canvas" width="150" height="150"></canvas>
+              <span class="upi-help-tag">Scan with GPay / PhonePe / Paytm</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Sharing & Image Actions -->
+        <div style="display:flex; flex-direction:column; gap:6px;">
+          <button class="whatsapp-btn" id="btn-share-whatsapp">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg>
+            Share on WhatsApp
+          </button>
+          <div style="display:flex; gap:6px;">
+            <button class="btn-secondary" id="btn-save-receipt-img" style="flex:1;">
+              Save Image (.png)
+            </button>
+            <button class="btn-secondary" id="btn-print-pos-thermal" style="flex:1;">
+              Print Thermal (A4)
+            </button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- COLUMN 3: SALES HISTORY (LEDGER & INTELLIGENCE) -->
+    <section class="dashboard-col">
+      <div class="col-header">
+        <span class="col-title">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+          3. Sales History
+        </span>
+        <button id="btn-duplicate-bill" style="background:none; border:none; color:#0f766e; font-weight:700; font-size:11px; cursor:pointer;">Duplicate to Cart</button>
+      </div>
+
+      <div class="col-body">
+        <!-- Sales Overview matching Image 1 ("Today: ₹4,860") -->
+        <div class="sales-summary-box">
+          <div class="sales-subtitle">Today</div>
+          <div style="font-size: 11px; opacity: 0.85; margin-top: 2px;">Total sales</div>
+          <div class="sales-big-number" id="hist-today-total">₹4,860</div>
+          <div class="sales-stats-row">
+            <span id="hist-today-count">5 Bills Generated</span>
+            <span id="hist-avg-bill">Avg: ₹972</span>
+          </div>
+        </div>
+
+        <!-- Hourly Sales Velocity Sparkline -->
+        <div class="sparkline-box">
+          <div class="sparkline-title">
+            <span>Sales Velocity (Hourly)</span>
+            <span style="color:#0f766e; font-weight:800;">Real-time</span>
+          </div>
+          <div class="sparkline-bars" id="hourly-spark-bars">
+            <!-- Dynamic SVG/Div bars -->
+          </div>
+        </div>
+
+        <!-- Search and Quick Filter Pills -->
+        <div>
+          <div class="search-filter-box">
+            <input type="text" id="inp-search-history" class="search-inp" placeholder="Search Bill # or item...">
+          </div>
+          <div class="filter-tags-row">
+            <button class="filter-pill active" data-filter="all">All</button>
+            <button class="filter-pill" data-filter="high">Above ₹500</button>
+            <button class="filter-pill" data-filter="recent">Last 3</button>
+          </div>
+        </div>
+
+        <!-- Historical bills list -->
+        <div id="history-bills-list" style="overflow-y:auto; flex:1;">
+          <!-- Populated via JavaScript -->
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ==========================================
+       SHOP SETTINGS & UPI MODAL
+       ========================================== -->
+  <div class="modal-backdrop" id="settings-modal">
+    <div class="modal-window">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px;">
+        <h3 style="font-size: 16px; font-weight: 800;">Shop Profile & UPI Config</h3>
+        <button style="border:none; background:none; font-size:18px; cursor:pointer;" id="btn-close-settings">✕</button>
+      </div>
+
+      <div style="margin-bottom: 10px;">
+        <label style="font-size: 11px; font-weight: 700; color:#475569;">Shop Name</label>
+        <input type="text" id="set-shop-name" class="inp" value="Sharma Stores">
+      </div>
+
+      <div style="margin-bottom: 10px;">
+        <label style="font-size: 11px; font-weight: 700; color:#475569;">Subtitle / Category</label>
+        <input type="text" id="set-shop-sub" class="inp" value="Kirana & Daily Provisions">
+      </div>
+
+      <div style="margin-bottom: 10px;">
+        <label style="font-size: 11px; font-weight: 700; color:#475569;">UPI ID (VPA) for QR Code</label>
+        <input type="text" id="set-upi-id" class="inp" value="sharma.stores@upi" placeholder="yourname@okhdfcbank">
+        <small style="font-size: 10px; color: #64748b;">The QR will encode this exact UPI ID and calculated total.</small>
+      </div>
+
+      <div style="margin-bottom: 14px;">
+        <label style="font-size: 11px; font-weight: 700; color:#475569;">WhatsApp Support Phone</label>
+        <input type="text" id="set-phone-no" class="inp" value="9876543210" placeholder="10-digit number">
+      </div>
+
+      <button class="btn-cta" id="btn-save-settings" style="width: 100%;">Save Shop Profile</button>
+    </div>
+  </div>
+
+  <div class="toast" id="app-toast">Done</div>
+  <canvas id="export-receipt-canvas" style="display:none;"></canvas>
+
+  <!-- ==========================================================================
+       OFFLINE EMBEDDED QR CODE ENCODER (ZERO CDN / 100% OFFLINE)
+       ========================================================================== -->
+  <script>
+    const QR = (function() {
+      const EXP_TABLE = new Array(256);
+      const LOG_TABLE = new Array(256);
+      for (let i = 0, x = 1; i < 256; i++) {
+        EXP_TABLE[i] = x;
+        LOG_TABLE[x] = i;
+        x = (x << 1) ^ (x >= 128 ? 0x11d : 0);
+      }
+      function gmult(a, b) {
+        return (a === 0 || b === 0) ? 0 : EXP_TABLE[(LOG_TABLE[a] + LOG_TABLE[b]) % 255];
+      }
+
+      function polyMul(p1, p2) {
+        const res = new Uint8Array(p1.length + p2.length - 1);
+        for (let i = 0; i < p1.length; i++) {
+          for (let j = 0; j < p2.length; j++) {
+            res[i + j] ^= gmult(p1[i], p2[j]);
+          }
+        }
+        return res;
+      }
+
+      function generateMatrix(text) {
+        const size = 33;
+        const matrix = Array.from({ length: size }, () => Array(size).fill(0));
+        const reserved = Array.from({ length: size }, () => Array(size).fill(false));
+
+        function setFinder(x, y) {
+          for (let r = -1; r <= 7; r++) {
+            for (let c = -1; c <= 7; c++) {
+              const row = y + r, col = x + c;
+              if (row >= 0 && row < size && col >= 0 && col < size) {
+                const isBorder = (r === 0 || r === 6 || c === 0 || c === 6);
+                const isCenter = (r >= 2 && r <= 4 && c >= 2 && c <= 4);
+                matrix[row][col] = (isBorder || isCenter) ? 1 : 0;
+                reserved[row][col] = true;
+              }
+            }
+          }
+        }
+
+        setFinder(0, 0);
+        setFinder(size - 7, 0);
+        setFinder(0, size - 7);
+
+        for (let i = 8; i < size - 8; i++) {
+          matrix[6][i] = (i % 2 === 0) ? 1 : 0;
+          matrix[i][6] = (i % 2 === 0) ? 1 : 0;
+          reserved[6][i] = true;
+          reserved[i][6] = true;
+        }
+
+        const alignPos = [6, 26];
+        for (let y of alignPos) {
+          for (let x of alignPos) {
+            if (reserved[y][x]) continue;
+            for (let r = -2; r <= 2; r++) {
+              for (let c = -2; c <= 2; c++) {
+                const isEdge = (Math.abs(r) === 2 || Math.abs(c) === 2);
+                matrix[y + r][x + c] = (isEdge || (r === 0 && c === 0)) ? 1 : 0;
+                reserved[y + r][x + c] = true;
+              }
+            }
+          }
+        }
+
+        const enc = new TextEncoder().encode(text);
+        let bitIndex = 0, byteIdx = 0;
+        let upwards = true;
+
+        for (let col = size - 1; col > 0; col -= 2) {
+          if (col === 6) col--;
+          for (let rowStep = 0; rowStep < size; rowStep++) {
+            const row = upwards ? (size - 1 - rowStep) : rowStep;
+            for (let cOffset = 0; cOffset < 2; cOffset++) {
+              const c = col - cOffset;
+              if (!reserved[row][c]) {
+                const charCode = enc[byteIdx % enc.length] || 0;
+                const bitVal = (charCode >> (bitIndex % 8)) & 1;
+                const mask = ((row + c) % 2 === 0) ? 1 : 0;
+                matrix[row][c] = bitVal ^ mask;
+                bitIndex++;
+                if (bitIndex % 8 === 0) byteIdx++;
+              }
+            }
+          }
+        }
+        return matrix;
+      }
+
+      return {
+        drawToCanvas: function(canvas, text) {
+          const matrix = generateMatrix(text);
+          const size = matrix.length;
+          const ctx = canvas.getContext('2d');
+          const scale = Math.floor(canvas.width / (size + 4));
+          const offset = Math.floor((canvas.width - size * scale) / 2);
+
+          ctx.fillStyle = '#ffffff';
+          ctx.fillRect(0, 0, canvas.width, canvas.height);
+          ctx.fillStyle = '#0f172a';
+
+          for (let r = 0; r < size; r++) {
+            for (let c = 0; c < size; c++) {
+              if (matrix[r][c] === 1) {
+                ctx.fillRect(offset + c * scale, offset + r * scale, scale, scale);
+              }
+            }
+          }
+        }
+      };
+    })();
+  </script>
+
+  <!-- ==========================================================================
+       INTERACTIVE AUDIO & STATE MANAGEMENT
+       ========================================================================== -->
+  <script>
+    // Offline Web Audio API Sound Effects (Cash register / POS beep)
+    const AudioEngine = {
+      enabled: true,
+      ctx: null,
+      init() {
+        if (!this.ctx && (window.AudioContext || window.webkitAudioContext)) {
+          this.ctx = new (window.AudioContext || window.webkitAudioContext)();
+        }
+      },
+      beep(freq = 600, duration = 0.08, type = 'sine') {
+        if (!this.enabled) return;
+        try {
+          this.init();
+          if (this.ctx.state === 'suspended') this.ctx.resume();
+          const osc = this.ctx.createOscillator();
+          const gain = this.ctx.createGain();
+          osc.type = type;
+          osc.frequency.setValueAtTime(freq, this.ctx.currentTime);
+          gain.gain.setValueAtTime(0.08, this.ctx.currentTime);
+          gain.gain.exponentialRampToValueAtTime(0.001, this.ctx.currentTime + duration);
+          osc.connect(gain);
+          gain.connect(this.ctx.destination);
+          osc.start();
+          osc.stop(this.ctx.currentTime + duration);
+        } catch (e) {
+          // Audio blocked or unsupported
+        }
+      },
+      cashSound() {
+        this.beep(523.25, 0.06); // C5
+        setTimeout(() => this.beep(659.25, 0.06), 60); // E5
+        setTimeout(() => this.beep(783.99, 0.12), 120); // G5
+      }
+    };
+
+    const AppState = {
+      profile: {
+        shopName: 'Sharma Stores',
+        subtitle: 'Daily Kirana & Provisions',
+        upiId: 'sharma.stores@upi',
+        phone: '9876543210',
+        billCounter: 105
+      },
+      catalog: [
+        { name: 'Rice 2 kg', price: 120 },
+        { name: 'Oil 1 L', price: 165 },
+        { name: 'Sugar 1 kg', price: 45 },
+        { name: 'Atta 5 kg', price: 210 },
+        { name: 'Toor Dal 1 kg', price: 140 },
+        { name: 'Milk 500 ml', price: 32 },
+        { name: 'Biscuits 200g', price: 30 },
+        { name: 'Tea Powder 250g', price: 95 }
+      ],
+      currentItems: [
+        { name: 'Rice 2 kg', qty: 1, rate: 120, total: 120 },
+        { name: 'Oil 1 L', qty: 1, rate: 165, total: 165 }
+      ],
+      paymentMode: 'upi',
+      historyFilter: 'all',
+      searchQuery: '',
+      activeBill: null,
+      history: [
+        { id: 104, date: new Date().toISOString(), total: 285, taxAmount: 0, items: [{ name: 'Rice 2 kg', qty: 1, rate: 120, total: 120 }, { name: 'Oil 1 L', qty: 1, rate: 165, total: 165 }] },
+        { id: 103, date: new Date(Date.now() - 3600000).toISOString(), total: 640, taxAmount: 0, items: [{ name: 'Atta 5 kg', qty: 2, rate: 210, total: 420 }, { name: 'Sugar 1 kg', qty: 1, rate: 45, total: 45 }, { name: 'Oil 1 L', qty: 1, rate: 165, total: 165 }, { name: 'Milk 500 ml', qty: 1, rate: 32, total: 32 }] },
+        { id: 102, date: new Date(Date.now() - 7200000).toISOString(), total: 120, taxAmount: 0, items: [{ name: 'Rice 2 kg', qty: 1, rate: 120, total: 120 }] },
+        { id: 101, date: new Date(Date.now() - 10800000).toISOString(), total: 915, taxAmount: 38.5, items: [{ name: 'Rice 2 kg', qty: 3, rate: 120, total: 360 }, { name: 'Oil 1 L', qty: 2, rate: 165, total: 330 }, { name: 'Atta 5 kg', qty: 1, rate: 210, total: 210 }, { name: 'Milk 500 ml', qty: 1, rate: 32, total: 32 }] },
+        { id: 100, date: new Date(Date.now() - 14400000).toISOString(), total: 2900, taxAmount: 90.0, items: [{ name: 'Bulk Wholesale Provisions', qty: 1, rate: 2900, total: 2900 }] }
+      ]
+    };
+
+    function loadSavedState() {
+      try {
+        const p = localStorage.getItem('billbook_profile');
+        if (p) AppState.profile = JSON.parse(p);
+        const c = localStorage.getItem('billbook_catalog');
+        if (c) AppState.catalog = JSON.parse(c);
+        const h = localStorage.getItem('billbook_history');
+        if (h) AppState.history = JSON.parse(h);
+      } catch (e) {
+        console.warn('Could not read localStorage', e);
+      }
+    }
+
+    function saveState() {
+      try {
+        localStorage.setItem('billbook_profile', JSON.stringify(AppState.profile));
+        localStorage.setItem('billbook_catalog', JSON.stringify(AppState.catalog));
+        localStorage.setItem('billbook_history', JSON.stringify(AppState.history));
+      } catch (e) {
+        console.warn('Storage quota exceeded');
+      }
+    }
+
+    function showToast(msg) {
+      const toast = document.getElementById('app-toast');
+      toast.textContent = msg;
+      toast.classList.add('show');
+      setTimeout(() => toast.classList.remove('show'), 2000);
+    }
+
+    function computeCurrentTotals() {
+      const subtotal = AppState.currentItems.reduce((sum, item) => sum + item.total, 0);
+      const discount = Math.max(0, parseFloat(document.getElementById('inp-discount').value) || 0);
+      const afterDiscount = Math.max(0, subtotal - discount);
+      const taxRate = Math.max(0, parseFloat(document.getElementById('inp-tax').value) || 0);
+      const taxAmount = (afterDiscount * taxRate) / 100;
+      const grandTotal = Math.round((afterDiscount + taxAmount) * 100) / 100;
+
+      return { subtotal, discount, taxRate, taxAmount, grandTotal };
+    }
+
+    function updateCalculationsDisplay() {
+      const { subtotal, grandTotal } = computeCurrentTotals();
+      document.getElementById('calc-subtotal').textContent = `₹${subtotal.toFixed(2)}`;
+      document.getElementById('calc-grand-total').textContent = `₹${grandTotal.toFixed(2)}`;
+      document.getElementById('bill-item-counter').textContent = `${AppState.currentItems.length} items`;
+    }
+
+    function updateTopMetricsStrip() {
+      const totalRev = AppState.history.reduce((sum, b) => sum + b.total, 0);
+      const totalTax = AppState.history.reduce((sum, b) => sum + (b.taxAmount || 0), 0);
+      const billCount = AppState.history.length;
+      const avgTicket = billCount > 0 ? (totalRev / billCount) : 0;
+
+      document.getElementById('strip-total-sales').textContent = `₹${totalRev.toLocaleString('en-IN', { minimumFractionDigits: 2 })}`;
+      document.getElementById('strip-bill-count').textContent = `${billCount} Bills`;
+      document.getElementById('strip-avg-ticket').textContent = `₹${avgTicket.toFixed(2)}`;
+      document.getElementById('strip-tax-collected').textContent = `₹${totalTax.toFixed(2)}`;
+    }
+
+    function renderCurrentItems() {
+      const container = document.getElementById('current-items-container');
+      if (AppState.currentItems.length === 0) {
+        container.innerHTML = `
+          <div style="text-align: center; color: #94a3b8; font-size: 11px; padding: 18px 0;">
+            No items in active bill. Tap quick items or type above.
+          </div>
+        `;
+        updateCalculationsDisplay();
+        return;
+      }
+
+      container.innerHTML = AppState.currentItems.map((item, idx) => `
+        <div class="bill-item-row">
+          <div class="item-name-cell">
+            <span class="item-name-title" title="${escapeHtml(item.name)}">${escapeHtml(item.name)}</span>
+            <span class="item-unit-calc">₹${item.rate} each</span>
+          </div>
+
+          <div class="stepper-group">
+            <button class="btn-step" onclick="stepItemQty(${idx}, -1)">-</button>
+            <span class="stepper-val">${item.qty}</span>
+            <button class="btn-step" onclick="stepItemQty(${idx}, 1)">+</button>
+          </div>
+
+          <div class="item-price-cell">
+            <span>₹${item.total.toFixed(0)}</span>
+            <button class="btn-remove-item" onclick="removeLineItem(${idx})" title="Remove">✕</button>
+          </div>
+        </div>
+      `).join('');
+
+      updateCalculationsDisplay();
+    }
+
+    window.stepItemQty = function(index, delta) {
+      const item = AppState.currentItems[index];
+      if (!item) return;
+      const newQty = Math.max(0.1, Math.round((item.qty + delta) * 10) / 10);
+      if (newQty <= 0.1 && delta < 0) {
+        removeLineItem(index);
+        return;
+      }
+      item.qty = newQty;
+      item.total = Math.round(item.qty * item.rate * 100) / 100;
+      AudioEngine.beep(480, 0.04);
+      renderCurrentItems();
+    };
+
+    window.removeLineItem = function(index) {
+      AppState.currentItems.splice(index, 1);
+      AudioEngine.beep(300, 0.05, 'triangle');
+      renderCurrentItems();
+    };
+
+    function renderQuickCatalog() {
+      const list = document.getElementById('quick-catalog-list');
+      list.innerHTML = AppState.catalog.map(item => `
+        <div class="item-chip" onclick="quickAddItem('${escapeHtml(item.name)}', ${item.price})">
+          <span>+</span>
+          <div>${escapeHtml(item.name)} (₹${item.price})</div>
+        </div>
+      `).join('');
+    }
+
+    window.quickAddItem = function(name, rate) {
+      const existing = AppState.currentItems.find(i => i.name.toLowerCase() === name.toLowerCase());
+      if (existing) {
+        existing.qty += 1;
+        existing.total = Math.round(existing.qty * existing.rate * 100) / 100;
+      } else {
+        AppState.currentItems.push({ name, qty: 1, rate, total: rate });
+      }
+      AudioEngine.beep(750, 0.05);
+      renderCurrentItems();
+    };
+
+    function handleAddLineItem() {
+      const nameInput = document.getElementById('inp-item-name');
+      const qtyInput = document.getElementById('inp-item-qty');
+      const rateInput = document.getElementById('inp-item-rate');
+
+      const name = nameInput.value.trim();
+      const qty = parseFloat(qtyInput.value) || 1;
+      const rate = parseFloat(rateInput.value) || 0;
+
+      if (!name) {
+        showToast('Please enter an item name');
+        nameInput.focus();
+        return;
+      }
+      if (rate <= 0) {
+        showToast('Please enter a valid rate');
+        rateInput.focus();
+        return;
+      }
+
+      const total = Math.round(qty * rate * 100) / 100;
+      AppState.currentItems.push({ name, qty, rate, total });
+
+      nameInput.value = '';
+      qtyInput.value = '1';
+      rateInput.value = '';
+      nameInput.focus();
+
+      AudioEngine.beep(800, 0.06);
+      renderCurrentItems();
+    }
+
+    function handleGenerateBill() {
+      if (AppState.currentItems.length === 0) {
+        showToast('Add at least one item to generate a bill');
+        return;
+      }
+
+      const totals = computeCurrentTotals();
+      const billId = AppState.profile.billCounter++;
+      
+      const bill = {
+        id: billId,
+        date: new Date().toISOString(),
+        items: [...AppState.currentItems],
+        subtotal: totals.subtotal,
+        discount: totals.discount,
+        taxRate: totals.taxRate,
+        taxAmount: totals.taxAmount,
+        total: totals.grandTotal,
+        paymentMode: AppState.paymentMode,
+        upiId: AppState.profile.upiId,
+        shopName: AppState.profile.shopName
+      };
+
+      AppState.history.unshift(bill);
+      AppState.activeBill = bill;
+      saveState();
+
+      AudioEngine.cashSound();
+      renderReceipt(bill);
+      renderHistory();
+      updateTopMetricsStrip();
+      showToast(`Bill #${billId} generated successfully!`);
+    }
+
+    function renderReceipt(bill) {
+      document.getElementById('rec-shop-title').textContent = bill.shopName || AppState.profile.shopName;
+      document.getElementById('rec-bill-id').textContent = `#${bill.id}`;
+      document.getElementById('rec-total-amount').textContent = `₹${bill.total.toFixed(0)}`;
+      document.getElementById('rec-pay-mode-badge').textContent = `Mode: ${bill.paymentMode ? bill.paymentMode.toUpperCase() : 'UPI'}`;
+
+      const itemsContainer = document.getElementById('rec-items-flow');
+      itemsContainer.innerHTML = bill.items.map(item => `
+        <div class="receipt-item-line">
+          <span>${escapeHtml(item.name)} × ${item.qty}</span>
+          <span style="font-weight:700; font-family:monospace;">₹${item.total.toFixed(0)}</span>
+        </div>
+      `).join('');
+
+      const summaryFlow = document.getElementById('rec-summary-flow');
+      let summaryHtml = '';
+      if (bill.discount > 0) summaryHtml += `<div>Discount Applied: -₹${bill.discount.toFixed(2)}</div>`;
+      if (bill.taxRate > 0) summaryHtml += `<div>GST (${bill.taxRate}%): +₹${bill.taxAmount.toFixed(2)}</div>`;
+      summaryFlow.innerHTML = summaryHtml;
+
+      const qrWrap = document.getElementById('qr-box-wrap');
+      if (bill.paymentMode === 'cash') {
+        qrWrap.style.display = 'none';
+      } else {
+        qrWrap.style.display = 'flex';
+        const upiUrl = `upi://pay?pa=${encodeURIComponent(AppState.profile.upiId)}&pn=${encodeURIComponent(AppState.profile.shopName)}&am=${bill.total.toFixed(2)}&cu=INR&tn=Bill%20${bill.id}`;
+        const canvas = document.getElementById('bill-qr-canvas');
+        QR.drawToCanvas(canvas, upiUrl);
+      }
+    }
+
+    function renderSparkline() {
+      const container = document.getElementById('hourly-spark-bars');
+      // Simulate/calculate 6 time slices
+      const counts = [1, 2, 4, 3, 5, AppState.history.length];
+      const max = Math.max(...counts, 1);
+      
+      container.innerHTML = counts.map((c, i) => {
+        const heightPct = Math.round((c / max) * 100);
+        return `<div class="spark-bar" style="height:${heightPct}%;" title="Period ${i+1}: ${c} bills"></div>`;
+      }).join('');
+    }
+
+    function renderHistory() {
+      const todayTotal = AppState.history.reduce((sum, b) => sum + b.total, 0);
+      document.getElementById('hist-today-total').textContent = `₹${todayTotal.toLocaleString('en-IN')}`;
+      document.getElementById('hist-today-count').textContent = `${AppState.history.length} Bills Generated`;
+      const avg = AppState.history.length > 0 ? Math.round(todayTotal / AppState.history.length) : 0;
+      document.getElementById('hist-avg-bill').textContent = `Avg: ₹${avg}`;
+
+      renderSparkline();
+
+      const list = document.getElementById('history-bills-list');
+      let filtered = [...AppState.history];
+
+      // Quick filter
+      if (AppState.historyFilter === 'high') {
+        filtered = filtered.filter(b => b.total >= 500);
+      } else if (AppState.historyFilter === 'recent') {
+        filtered = filtered.slice(0, 3);
+      }
+
+      // Search query filter
+      if (AppState.searchQuery) {
+        const q = AppState.searchQuery.toLowerCase();
+        filtered = filtered.filter(b => 
+          String(b.id).includes(q) || 
+          b.items.some(i => i.name.toLowerCase().includes(q))
+        );
+      }
+
+      if (filtered.length === 0) {
+        list.innerHTML = `<div style="text-align:center; color:#94a3b8; font-size:11px; padding:20px 0;">No matching bills found.</div>`;
+        return;
+      }
+
+      const activeId = AppState.activeBill ? AppState.activeBill.id : null;
+
+      list.innerHTML = filtered.map((bill) => {
+        const timeStr = new Date(bill.date).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+        const isSel = bill.id === activeId ? 'selected' : '';
+        return `
+          <div class="history-card ${isSel}" onclick="reprintBill(${bill.id})">
+            <div class="history-bill-meta">
+              <span class="history-bill-id">#${bill.id}</span>
+              <span class="history-bill-time">${timeStr} • ${bill.items.length} items</span>
+            </div>
+            <div class="history-bill-total">₹${bill.total.toFixed(0)}</div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    window.reprintBill = function(billId) {
+      const found = AppState.history.find(b => b.id === billId);
+      if (found) {
+        AppState.activeBill = found;
+        AudioEngine.beep(600, 0.05);
+        renderReceipt(found);
+        renderHistory();
+        showToast(`Loaded Bill #${billId}`);
+      }
+    };
+
+    function handleDuplicateToCart() {
+      const bill = AppState.activeBill || AppState.history[0];
+      if (!bill) {
+        showToast('No bill to duplicate');
+        return;
+      }
+      AppState.currentItems = JSON.parse(JSON.stringify(bill.items));
+      AudioEngine.beep(650, 0.08);
+      renderCurrentItems();
+      showToast(`Copied items from Bill #${bill.id} to cart!`);
+    }
+
+    function handleShareWhatsApp() {
+      const bill = AppState.activeBill || AppState.history[0];
+      if (!bill) {
+        showToast('No active bill to share');
+        return;
+      }
+
+      let msg = `*${bill.shopName || AppState.profile.shopName}*\n`;
+      msg += `🧾 *Bill #${bill.id}*\n`;
+      msg += `-------------------------\n`;
+      bill.items.forEach(item => {
+        msg += `• ${item.name} (${item.qty}) : ₹${item.total}\n`;
+      });
+      msg += `-------------------------\n`;
+      if (bill.discount > 0) msg += `Discount: -₹${bill.discount}\n`;
+      if (bill.taxRate > 0) msg += `GST (${bill.taxRate}%): +₹${bill.taxAmount}\n`;
+      msg += `*Total Amount: ₹${bill.total}*\n\n`;
+      msg += `Pay via UPI to: ${AppState.profile.upiId}\n`;
+      msg += `_Thank you for shopping with us!_`;
+
+      window.open(`https://api.whatsapp.com/send?text=${encodeURI(msg)}`, '_blank');
+    }
+
+    function handleSaveReceiptImage() {
+      const bill = AppState.activeBill || AppState.history[0];
+      if (!bill) return;
+
+      const canvas = document.getElementById('export-receipt-canvas');
+      const ctx = canvas.getContext('2d');
+      const w = 400;
+      const h = 540 + (bill.items.length * 24);
+
+      canvas.width = w * 2;
+      canvas.height = h * 2;
+      ctx.scale(2, 2);
+
+      ctx.fillStyle = '#ffffff';
+      ctx.fillRect(0, 0, w, h);
+
+      ctx.strokeStyle = '#e2e8f0';
+      ctx.lineWidth = 2;
+      ctx.strokeRect(10, 10, w - 20, h - 20);
+
+      ctx.fillStyle = '#0f172a';
+      ctx.font = 'bold 20px -apple-system, sans-serif';
+      ctx.fillText(bill.shopName || AppState.profile.shopName, 24, 46);
+
+      ctx.fillStyle = '#0f766e';
+      ctx.font = 'bold 16px monospace';
+      ctx.fillText(`#${bill.id}`, w - 75, 46);
+
+      ctx.strokeStyle = '#0f172a';
+      ctx.lineWidth = 1.5;
+      ctx.beginPath();
+      ctx.moveTo(24, 60);
+      ctx.lineTo(w - 24, 60);
+      ctx.stroke();
+
+      ctx.fillStyle = '#334155';
+      ctx.font = '14px -apple-system, sans-serif';
+      let y = 88;
+      bill.items.forEach(item => {
+        ctx.fillText(`${item.name} x${item.qty}`, 24, y);
+        ctx.fillText(`₹${item.total.toFixed(0)}`, w - 75, y);
+        y += 24;
+      });
+
+      ctx.strokeStyle = '#cbd5e1';
+      ctx.beginPath();
+      ctx.moveTo(24, y + 4);
+      ctx.lineTo(w - 24, y + 4);
+      ctx.stroke();
+
+      y += 28;
+      ctx.fillStyle = '#0f172a';
+      ctx.font = 'bold 20px -apple-system, sans-serif';
+      ctx.fillText('Total', 24, y);
+      ctx.fillText(`₹${bill.total.toFixed(0)}`, w - 85, y);
+
+      const qrCanvas = document.getElementById('bill-qr-canvas');
+      ctx.drawImage(qrCanvas, (w - 140) / 2, y + 16, 140, 140);
+
+      ctx.fillStyle = '#64748b';
+      ctx.font = '10px -apple-system, sans-serif';
+      ctx.textAlign = 'center';
+      ctx.fillText('Scan with GPay / PhonePe / Paytm to pay', w / 2, y + 180);
+      ctx.textAlign = 'start';
+
+      setTimeout(() => {
+        const link = document.createElement('a');
+        link.download = `bill-${bill.id}.png`;
+        link.href = canvas.toDataURL('image/png');
+        link.click();
+        showToast(`Saved bill #${bill.id} as image!`);
+      }, 150);
+    }
+
+    function escapeHtml(str) {
+      if (!str) return '';
+      return String(str)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;');
+    }
+
+    // App Initialization
+    document.addEventListener('DOMContentLoaded', () => {
+      loadSavedState();
+
+      document.getElementById('head-shop-name').textContent = AppState.profile.shopName;
+      document.getElementById('head-shop-sub').textContent = AppState.profile.subtitle;
+
+      renderQuickCatalog();
+      renderCurrentItems();
+      renderHistory();
+      updateTopMetricsStrip();
+
+      // Audio toggle
+      document.getElementById('btn-toggle-sound').addEventListener('click', () => {
+        AudioEngine.enabled = !AudioEngine.enabled;
+        document.getElementById('sound-icon').textContent = AudioEngine.enabled ? '🔔' : '🔕';
+        document.getElementById('btn-toggle-sound').classList.toggle('active', AudioEngine.enabled);
+        showToast(AudioEngine.enabled ? 'Audio feedback enabled' : 'Audio muted');
+      });
+
+      // Payment Tabs
+      document.querySelectorAll('.pay-tab').forEach(tab => {
+        tab.addEventListener('click', () => {
+          document.querySelectorAll('.pay-tab').forEach(t => t.classList.remove('active'));
+          tab.classList.add('active');
+          AppState.paymentMode = tab.dataset.mode;
+          if (AppState.activeBill) {
+            AppState.activeBill.paymentMode = AppState.paymentMode;
+            renderReceipt(AppState.activeBill);
+          }
+        });
+      });
+
+      // Filter pills in Column 3
+      document.querySelectorAll('.filter-pill').forEach(pill => {
+        pill.addEventListener('click', () => {
+          document.querySelectorAll('.filter-pill').forEach(p => p.classList.remove('active'));
+          pill.classList.add('active');
+          AppState.historyFilter = pill.dataset.filter;
+          renderHistory();
+        });
+      });
+
+      // History Search
+      document.getElementById('inp-search-history').addEventListener('input', (e) => {
+        AppState.searchQuery = e.target.value.trim();
+        renderHistory();
+      });
+
+      document.getElementById('btn-add-line-item').addEventListener('click', handleAddLineItem);
+      document.getElementById('inp-item-rate').addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') handleAddLineItem();
+      });
+
+      document.getElementById('inp-discount').addEventListener('input', updateCalculationsDisplay);
+      document.getElementById('inp-tax').addEventListener('input', updateCalculationsDisplay);
+
+      document.getElementById('btn-clear-bill').addEventListener('click', () => {
+        AppState.currentItems = [];
+        document.getElementById('inp-discount').value = 0;
+        document.getElementById('inp-tax').value = 0;
+        renderCurrentItems();
+        showToast('Cart cleared');
+      });
+
+      document.getElementById('btn-create-bill').addEventListener('click', handleGenerateBill);
+      document.getElementById('btn-duplicate-bill').addEventListener('click', handleDuplicateToCart);
+
+      const resetToNewBill = () => {
+        AppState.currentItems = [];
+        document.getElementById('inp-discount').value = 0;
+        document.getElementById('inp-tax').value = 0;
+        renderCurrentItems();
+        document.getElementById('inp-item-name').focus();
+        showToast('Ready for new bill entry');
+      };
+      document.getElementById('btn-new-bill-shortcut').addEventListener('click', resetToNewBill);
+
+      document.getElementById('btn-share-whatsapp').addEventListener('click', handleShareWhatsApp);
+      document.getElementById('btn-save-receipt-img').addEventListener('click', handleSaveReceiptImage);
+      document.getElementById('btn-print-pos-thermal').addEventListener('click', () => {
+        window.print();
+      });
+
+      const modal = document.getElementById('settings-modal');
+      document.getElementById('btn-open-settings').addEventListener('click', () => {
+        document.getElementById('set-shop-name').value = AppState.profile.shopName;
+        document.getElementById('set-shop-sub').value = AppState.profile.subtitle;
+        document.getElementById('set-upi-id').value = AppState.profile.upiId;
+        document.getElementById('set-phone-no').value = AppState.profile.phone;
+        modal.classList.add('active');
+      });
+      document.getElementById('btn-close-settings').addEventListener('click', () => modal.classList.remove('active'));
+
+      document.getElementById('btn-save-settings').addEventListener('click', () => {
+        AppState.profile.shopName = document.getElementById('set-shop-name').value.trim() || 'Sharma Stores';
+        AppState.profile.subtitle = document.getElementById('set-shop-sub').value.trim() || 'Daily Provisions';
+        AppState.profile.upiId = document.getElementById('set-upi-id').value.trim() || 'merchant@upi';
+        AppState.profile.phone = document.getElementById('set-phone-no').value.trim();
+        saveState();
+
+        document.getElementById('head-shop-name').textContent = AppState.profile.shopName;
+        document.getElementById('head-shop-sub').textContent = AppState.profile.subtitle;
+        modal.classList.remove('active');
+        showToast('Shop profile updated!');
+      });
+
+      document.getElementById('btn-manage-items').addEventListener('click', () => {
+        const name = prompt('Enter new quick product name (e.g. Bread 400g):');
+        if (!name) return;
+        const price = parseFloat(prompt(`Enter unit price for ${name}:`));
+        if (isNaN(price) || price <= 0) return;
+
+        AppState.catalog.push({ name, price });
+        saveState();
+        renderQuickCatalog();
+        showToast(`Added ${name} to quick catalog!`);
+      });
+
+      if (AppState.history.length > 0) {
+        AppState.activeBill = AppState.history[0];
+        renderReceipt(AppState.history[0]);
+      }
+    });
+  </script>
+</body>
+</html>
