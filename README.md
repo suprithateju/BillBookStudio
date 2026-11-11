@@ -46,9 +46,6 @@ Interactive Quantity Steppers: Increment or decrement item quantities (+ / -) on
 
 Zero Remote APIs: Encodes standardized NPCI / UPI deep-link URLs into clean matrix bitmaps using pure client-side mathematics:
 
-
-$$\text{upi://pay?pa=\{vpa\}\&pn=\{name\}\&am=\{total\}\&cu=INR\&tn=Bill\%20\{id\}}$$
-
 Auto-Filled Amount: When scanned by Google Pay, PhonePe, BHIM, or Paytm, the exact bill total is pre-filled automatically—eliminating manual input errors.
 
 3. 📊 Real-Time Retail Intelligence & Sparklines
